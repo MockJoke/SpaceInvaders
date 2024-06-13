@@ -34,3 +34,4 @@
 # Others
 *.vs/
 *x64/
+*.idea/
