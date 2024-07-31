@@ -1,27 +1,29 @@
 ﻿#pragma once
 #include <SFML/Graphics.hpp>
-#include "../Global/Config.h"
+#include "../../header/UI/UIElement/ImageView.h"
 
 namespace Gameplay
 {
+    class GameplayController;
+
     class GameplayView
     {
     private:
-        const sf::String background_texture_path = Global::Config::background_texture_path;
-
         sf::RenderWindow* game_window;
         sf::Texture background_texture;
         sf::Sprite background_sprite;
 
-        void initializeBackgroundSprite();
-        void scaleBackgroundSprite();
+        GameplayController* gameplay_controller;
+        UI::UIElement::ImageView* background_image;
+        
+        void initializeBackgroundImage() const;
 
     public:
         GameplayView();
         ~GameplayView();
 
-        void initialize();
-        void update();
-        void render();
+        void initialize() const;
+        void update() const;
+        void render() const;
     };
 }

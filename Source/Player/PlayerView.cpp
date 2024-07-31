@@ -7,42 +7,45 @@
 
 namespace Player
 {
-    PlayerView::PlayerView() { }
+    PlayerView::PlayerView()
+    {
+        createUIElements();
+    }
 
-    PlayerView::~PlayerView() { }
+    PlayerView::~PlayerView()
+    {
+        destroy();
+    }
 
     void PlayerView::initialize(PlayerController* controller)
     {
         player_controller = controller;
-        game_window = Global::ServiceLocator::getInstance()->getGraphicService()->getGameWindow();
-        initializePlayerSprite();
+        initializeImage();
     }
 
-    void PlayerView::initializePlayerSprite()
+    void PlayerView::createUIElements()
     {
-        if (player_texture.loadFromFile(player_texture_path))
-        {
-            player_sprite.setTexture(player_texture);
-            scalePlayerSprite();
-        }
+        player_image = new UI::UIElement::ImageView();
     }
 
-    void PlayerView::scalePlayerSprite()
+    void PlayerView::initializeImage() const
     {
-       player_sprite.setScale(
-            //Here we find the factor to scale our sprites with. Ignore the static_cast for now, we will discuss it later
-            static_cast<float>(player_sprite_width) / player_sprite.getTexture()->getSize().x,
-            static_cast<float>(player_sprite_height) / player_sprite.getTexture()->getSize().y
-        );
+        player_image->initialize(Global::Config::player_texture_path, player_sprite_width, player_sprite_height, player_controller->getPlayerPosition());
     }
 
-    void PlayerView::update()
+    void PlayerView::update() const
     {
-        player_sprite.setPosition(player_controller->getPlayerPosition());
+        player_image->setPosition(player_controller->getPlayerPosition());
+        player_image->update();
     }
 
-    void PlayerView::render()
+    void PlayerView::render() const
     {
-        game_window->draw(player_sprite);
-    }    
+        player_image->render();
+    }
+
+    void PlayerView::destroy() const
+    {
+        delete(player_image);
+    }   
 }

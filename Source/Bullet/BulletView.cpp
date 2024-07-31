@@ -7,67 +7,63 @@
 
 namespace Bullet
 {
-    BulletView::BulletView() { }
+    BulletView::BulletView()
+    {
+        createUIElements();
+    }
 
-    BulletView::~BulletView() { }
+    BulletView::~BulletView()
+    {
+        destroy();
+    }
 
     void BulletView::initialize(BulletController* controller)
     {
         bullet_controller = controller;
-        game_window = Global::ServiceLocator::getInstance()->getGraphicService()->getGameWindow();
-        initializeImage(bullet_controller->getBulletType());
+        initializeImage();
     }
 
-    void BulletView::initializeImage(BulletType type)
+    void BulletView::createUIElements()
     {
-        switch (type)
+        bullet_image = new UI::UIElement::ImageView();
+    }
+    
+    void BulletView::initializeImage()
+    {
+        bullet_image->initialize(getBulletTexturePath(), bullet_sprite_width, bullet_sprite_height, bullet_controller->getProjectilePosition());
+    }
+
+    void BulletView::update() const
+    {
+        bullet_image->setPosition(bullet_controller->getProjectilePosition());
+        bullet_image->update();
+    }
+
+    void BulletView::render() const
+    {
+        bullet_image->render();
+    }
+
+    sf::String BulletView::getBulletTexturePath()
+    {
+        switch (bullet_controller->getBulletType())
         {
         case BulletType::PLAYER_BULLET:
-            if (bullet_texture.loadFromFile(Global::Config::player_bullet_texture_path))
-            {
-                bullet_sprite.setTexture(bullet_texture);
-                scaleImage();
-            }
-            break;
+            return Global::Config::player_bullet_texture_path;
+            
         case BulletType::LASER_BULLET:
-            if (bullet_texture.loadFromFile(Global::Config::laser_bullet_texture_path))
-            {
-                bullet_sprite.setTexture(bullet_texture);
-                scaleImage();
-            }
-            break;
+            return Global::Config::laser_bullet_texture_path;
+
         case BulletType::FROST_BULLET:
-            if (bullet_texture.loadFromFile(Global::Config::frost_beam_texture_path))
-            {
-                bullet_sprite.setTexture(bullet_texture);
-                scaleImage();
-            }
-            break;
+            return Global::Config::frost_beam_texture_path;
+
         case BulletType::TORPEDO:
-            if (bullet_texture.loadFromFile(Global::Config::torpedoe_texture_path))
-            {
-                bullet_sprite.setTexture(bullet_texture);
-                scaleImage();
-            }
-            break;
+            return Global::Config::torpedoe_texture_path;
         }
     }
 
-    void BulletView::scaleImage()
+    void BulletView::destroy() const
     {
-        bullet_sprite.setScale(
-            static_cast<float>(bullet_sprite_width) / bullet_sprite.getTexture()->getSize().x,
-            static_cast<float>(bullet_sprite_height) / bullet_sprite.getTexture()->getSize().y
-        );
-    }
-
-    void BulletView::update()
-    {
-        bullet_sprite.setPosition(bullet_controller->getProjectilePosition());
-    }
-
-    void BulletView::render()
-    {
-        game_window->draw(bullet_sprite);
+        delete(bullet_image);
     }
 }

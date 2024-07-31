@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <SFML/Graphics.hpp>
+#include "../../header/UI/Interface/IUIController.h"
 #include "../Button.h"
 #include "../../Global/Config.h"
 
@@ -7,7 +8,7 @@ namespace UI
 {
     namespace MainMenu
     {
-        class MainMenuUIController
+        class MainMenuUIController : public Interface::IUIController
         {
         private:
             const sf::String background_texture_path = Global::Config::background_texture_path;
@@ -39,12 +40,16 @@ namespace UI
 
             void processButtonInteractions();
             bool clickedButton(const Button*, sf::Vector2f);
+
+            void destroy();
+            
         public:
             MainMenuUIController();
 
-            void initialize();
-            void update();
-            void render();
+            void initialize() override;
+            void update() override;
+            void render() override;
+            void show() override;
         };
     }
 }

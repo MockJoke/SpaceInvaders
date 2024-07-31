@@ -6,10 +6,12 @@
 
 namespace UI
 {
-    // Nested namespace since everything in MainMenu exists inside UI
     namespace MainMenu
     {
-        MainMenuUIController::MainMenuUIController() { game_window = nullptr; }
+        MainMenuUIController::MainMenuUIController()
+        {
+            game_window = nullptr;
+        }
 
         void MainMenuUIController::initialize()
         {
@@ -127,6 +129,16 @@ namespace UI
         {
             const Event::EventService* event_service = Global::ServiceLocator::getInstance()->getEventService();
             return event_service->pressedLeftMouseButton() && button->IsMousePointerOverlapping(mouse_position);
+        }
+
+        void MainMenuUIController::show()
+        {
+            
+        }
+
+        void MainMenuUIController::destroy()
+        {
+            
         }
     }
 }

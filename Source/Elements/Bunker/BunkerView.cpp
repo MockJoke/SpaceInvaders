@@ -6,42 +6,45 @@ namespace Element
 {
     namespace Bunker
     {
-        BunkerView::BunkerView() { }
+        BunkerView::BunkerView()
+        {
+            createUIElements();
+        }
 
-        BunkerView::~BunkerView() { }
+        BunkerView::~BunkerView()
+        {
+            destroy();
+        }
 
         void BunkerView::initialize(BunkerController* controller)
         {
             bunker_controller = controller;
-            game_window = Global::ServiceLocator::getInstance()->getGraphicService()->getGameWindow();
             initializeImage();
         }
 
-        void BunkerView::initializeImage()
+        void BunkerView::createUIElements()
         {
-            if (bunker_texture.loadFromFile(bunker_texture_path))
-            {
-                bunker_sprite.setTexture(bunker_texture);
-                scaleSprite();
-            }
-        }
-        
-        void BunkerView::scaleSprite()
-        {
-            bunker_sprite.setScale(
-                static_cast<float>(bunker_sprite_width) / bunker_sprite.getTexture()->getSize().x,
-                static_cast<float>(bunker_sprite_height) / bunker_sprite.getTexture()->getSize().y
-            );
-        }
-        
-        void BunkerView::update()
-        {
-            bunker_sprite.setPosition(bunker_controller->getBunkerPosition());
+            bunker_image = new UI::UIElement::ImageView();
         }
 
-        void BunkerView::render()
+        void BunkerView::initializeImage() const
         {
-            game_window->draw(bunker_sprite);
+            bunker_image->initialize(Global::Config::bunker_texture_path, bunker_sprite_width, bunker_sprite_height, bunker_controller->getBunkerPosition());
+        }
+        
+        void BunkerView::update() const
+        {
+            bunker_image->update();
+        }
+
+        void BunkerView::render() const
+        {
+            bunker_image->render();
+        }
+
+        void BunkerView::destroy() const
+        {
+            delete(bunker_image);
         }
     }
 }

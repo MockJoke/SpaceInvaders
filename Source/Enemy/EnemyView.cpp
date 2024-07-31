@@ -1,72 +1,66 @@
 ﻿#include "../../Header/Enemy/EnemyView.h"
 #include "../../Header/Global/ServiceLocator.h"
-#include "../../Header/Graphic/GraphicService.h"
 #include "../../Header/Enemy/EnemyController.h"
 
 namespace Enemy
 {
-    EnemyView::EnemyView() { }
+    EnemyView::EnemyView()
+    {
+        createUIElements();
+    }
 
-    EnemyView::~EnemyView() { }
+    EnemyView::~EnemyView()
+    {
+        destroy();
+    }
 
     void EnemyView::initialize(EnemyController* controller)
     {
         enemy_controller = controller;
-        game_window = Global::ServiceLocator::getInstance()->getGraphicService()->getGameWindow();
-        initializeEnemySprite(enemy_controller->getEnemyType());
+        initializeImage();
     }
 
-    void EnemyView::initializeEnemySprite(EnemyType type)
+    void EnemyView::createUIElements()
     {
-        switch (type)
+        enemy_image = new UI::UIElement::ImageView();
+    }
+
+    void EnemyView::initializeImage()
+    {
+        enemy_image->initialize(getEnemyTexturePath(), enemy_sprite_width, enemy_sprite_height, enemy_controller->getEnemyPosition());
+    }
+
+    void EnemyView::update() const
+    {
+        enemy_image->setPosition(enemy_controller->getEnemyPosition());
+        enemy_image->update();
+    }
+
+    void EnemyView::render() const
+    {
+        enemy_image->render();
+    }
+
+    sf::String EnemyView::getEnemyTexturePath()
+    {
+        switch (enemy_controller->getEnemyType())
         {
-        case EnemyType::SUBZERO:
-            if (enemy_texture.loadFromFile(subzero_texture_path))
-            {
-                enemy_sprite.setTexture(enemy_texture);
-                scaleEnemySprite();
-            }
-            break;
         case EnemyType::ZAPPER:
-            if (enemy_texture.loadFromFile(zapper_texture_path))
-            {
-                enemy_sprite.setTexture(enemy_texture);
-                scaleEnemySprite();
-            }
-            break;
+            return Global::Config::zapper_texture_path;
+
         case EnemyType::THUNDER_SNAKE:
-            if (enemy_texture.loadFromFile(thunder_snake_texture_path))
-            {
-                enemy_sprite.setTexture(enemy_texture);
-                scaleEnemySprite();
-            }
-            break;
+            return Global::Config::thunder_snake_texture_path;
+
+        case EnemyType::SUBZERO:
+            return Global::Config::subzero_texture_path;
+
         case EnemyType::UFO:
-            if (enemy_texture.loadFromFile(ufo_texture_path))
-            {
-                enemy_sprite.setTexture(enemy_texture);
-                scaleEnemySprite();
-            }
-            break;
+            return Global::Config::ufo_texture_path;
         }
     }
 
-    void EnemyView::scaleEnemySprite()
+    void EnemyView::destroy() const
     {
-        // method to scale the Sprite according to our set dimensions
-        enemy_sprite.setScale(
-            static_cast<float>(enemy_sprite_width) / enemy_sprite.getTexture()->getSize().x,
-            static_cast<float>(enemy_sprite_height) / enemy_sprite.getTexture()->getSize().y
-        );
-    }
-
-    void EnemyView::update()
-    {
-        enemy_sprite.setPosition(enemy_controller->getEnemyPosition());
-    }
-
-    void EnemyView::render()
-    {
-        game_window->draw(enemy_sprite);
+        delete(enemy_image);
     }
 }

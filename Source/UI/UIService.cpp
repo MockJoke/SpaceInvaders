@@ -27,27 +27,43 @@ namespace UI
 
     void UIService::update()
     {
-        switch (Main::GameService::getGameState())
-        {
-        case Main::GameState::MAIN_MENU:
-            return main_menu_controller->update();
-            break;
-        }
+        Interface::IUIController* ui_controller = getCurrentUIController();
+        
+        if (ui_controller)
+            ui_controller->update();
     }
 
     void UIService::render()
     {
+        Interface::IUIController* ui_controller = getCurrentUIController();
+        
+        if (ui_controller)
+            ui_controller->render();
+    }
+
+    void UIService::showScreen()
+    {
+        Interface::IUIController* ui_controller = getCurrentUIController();
+
+        if (ui_controller)
+            ui_controller->show();
+    }
+    
+    void UIService::initializeControllers() const
+    {
+        main_menu_controller->initialize();
+    }
+
+    Interface::IUIController* UIService::getCurrentUIController() const
+    {
         switch (Main::GameService::getGameState())
         {
         case Main::GameState::MAIN_MENU:
-            return main_menu_controller->render();;
-            break;
-        }
-    }
+            return main_menu_controller;
 
-    void UIService::initializeControllers()
-    {
-        main_menu_controller->initialize();
+        default:
+            return nullptr;
+        }
     }
 
     void UIService::destroy()
